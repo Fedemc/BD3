@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+  <description> Practico1-Ej4 </description>
+  <display-name> Practico1-Ej4 </display-name>
+
+  <servlet>
+    <servlet-name>Proceso</servlet-name>
+    <servlet-class>sistema.web.servlets.Proceso</servlet-class>
+	
+	<init-param>
+		<param-name>ipServidor</param-name>
+		<param-value>localhost</param-value>
+	</init-param>
+	<init-param>
+		<param-name>puertoServidor</param-name>
+		<param-value>1099</param-value>
+	</init-param>
+  </servlet>
+ 
+  <servlet-mapping>
+    <servlet-name>Ingreso</servlet-name>
+    <url-pattern>/Ingreso</url-pattern>
+  </servlet-mapping>
+
+  <welcome-file-list>
+	<welcome-file>/Ingreso.jsp</welcome-file>
+  </welcome-file-list>
+
+</web-app>
