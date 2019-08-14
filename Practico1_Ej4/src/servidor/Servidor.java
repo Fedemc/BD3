@@ -1,4 +1,4 @@
-package sistema.servidor;
+package servidor;
 
 import java.util.List;
 import java.util.Properties;
@@ -19,18 +19,26 @@ public class Servidor
 		
 		try
 		{
-			//Leo datos del server
-			Properties p = new Properties();
-			String nomArch = "config/config-properties";
+			//Obtengo datos de config de server
+			Properties p=new Properties();
+			String nomArch="config/config.properties";
 			p.load(new FileInputStream(nomArch));
 			String ip=p.getProperty("ipServidor");
 			String puerto=p.getProperty("puertoServidor");
-			int port=Integer.parseInt(puerto);
+			int port = Integer.parseInt(puerto);
 			
 			//Pongo a correr el rmiregistry
 			LocateRegistry.createRegistry(port);
 			
 			//publico el objeto remoto en dicha ip y puerto
+			String ruta="//"+ip+":"+puerto+"/fachadaLogica";
+			Logica fachadaLogica=Logica.getInstancia();
+					
+			System.out.println("Inicio la lista de mensajes");
+			fachadaLogica.IniciarLista();
+			
+			Naming.rebind(ruta, fachadaLogica);
+			System.out.println("Servidor en linea");
 			
 		}
 		catch(RemoteException rEx)
@@ -49,5 +57,6 @@ public class Servidor
 		{
 			ioEx.printStackTrace();
 		}
+		
 	}	
 }

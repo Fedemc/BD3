@@ -1,4 +1,4 @@
-package sistema.web;
+package servlets;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +14,13 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import servidor.ILogica;
+
+
 public class Proceso extends HttpServlet
 {
 	private static final long serialVersionUID = 1L;
+	private ILogica iLogica;
 	
 	public void init()
 	{
@@ -27,10 +31,10 @@ public class Proceso extends HttpServlet
 			//String ip="127.0.0.1";
 			String puerto=super.getInitParameter("puertoServidor");
 			//String puerto="1099";
-			//String ruta="//"+ip+":"+puerto+"/fachada";
+			String ruta="//"+ip+":"+puerto+"/fachadaLogica";
 			
 			//Voy a buscar el objeto remoto
-			//iFachada = (ICapaLogica) Naming.lookup(ruta);
+			iLogica = (ILogica) Naming.lookup(ruta);
 		}
 		catch(MalformedURLException mEx)
 		{
