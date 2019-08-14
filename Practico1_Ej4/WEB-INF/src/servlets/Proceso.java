@@ -31,7 +31,7 @@ public class Proceso extends HttpServlet
 			//String ip="127.0.0.1";
 			String puerto=super.getInitParameter("puertoServidor");
 			//String puerto="1099";
-			String ruta="//"+ip+":"+puerto+"/fachadaLogica";
+			String ruta="//"+ip+":"+puerto+"/logica";
 			
 			//Voy a buscar el objeto remoto
 			iLogica = (ILogica) Naming.lookup(ruta);
@@ -48,5 +48,29 @@ public class Proceso extends HttpServlet
 		{
 			nobEx.printStackTrace();
 		}
+	}
+	
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+	{
+		// Obtengo el mensaje desde la página
+		String mensaje=req.getParameter("mensaje");
+		
+		// Manejo de errores
+		String msjError= new String();
+		
+		RequestDispatcher rd;
+		
+		// Le tiro el mensaje al server
+		try
+		{
+			iLogica.IngresarMensaje(mensaje);
+		}
+		catch(RemoteException remEx)
+		{
+			msjError=remEx.toString();
+			req.setAttribute("mensajeError", msjError);
+			rd=req.getRequestDispatcher("Error.jsp");
+		}
+		
 	}
 }

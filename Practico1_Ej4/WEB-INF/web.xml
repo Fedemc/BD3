@@ -10,7 +10,7 @@
 
   <servlet>
     <servlet-name>Proceso</servlet-name>
-    <servlet-class>sistema.web.servlets.Proceso</servlet-class>
+    <servlet-class>servlets.Proceso</servlet-class>
 	
 	<init-param>
 		<param-name>ipServidor</param-name>
@@ -23,8 +23,8 @@
   </servlet>
  
   <servlet-mapping>
-    <servlet-name>Ingreso</servlet-name>
-    <url-pattern>/Ingreso</url-pattern>
+    <servlet-name>Proceso</servlet-name>
+    <url-pattern>/Proceso</url-pattern>
   </servlet-mapping>
 
   <welcome-file-list>

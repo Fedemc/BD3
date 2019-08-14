@@ -46,9 +46,4 @@ public class Logica extends UnicastRemoteObject implements ILogica
 			System.out.println(mensaje);
 		}
 	}
-	
-	public void IniciarLista() throws RemoteException
-	{
-		listaMensajes.clear();
-	}
 }

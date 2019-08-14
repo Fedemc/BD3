@@ -21,7 +21,7 @@ public class Servidor
 		{
 			//Obtengo datos de config de server
 			Properties p=new Properties();
-			String nomArch="config/config.properties";
+			String nomArch="config.properties";
 			p.load(new FileInputStream(nomArch));
 			String ip=p.getProperty("ipServidor");
 			String puerto=p.getProperty("puertoServidor");
@@ -31,11 +31,8 @@ public class Servidor
 			LocateRegistry.createRegistry(port);
 			
 			//publico el objeto remoto en dicha ip y puerto
-			String ruta="//"+ip+":"+puerto+"/fachadaLogica";
+			String ruta="//"+ip+":"+puerto+"/logica";
 			Logica fachadaLogica=Logica.getInstancia();
-					
-			System.out.println("Inicio la lista de mensajes");
-			fachadaLogica.IniciarLista();
 			
 			Naming.rebind(ruta, fachadaLogica);
 			System.out.println("Servidor en linea");

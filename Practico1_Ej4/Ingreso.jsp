@@ -9,7 +9,7 @@
 <h2><b><ins>Ingreso de mensajes</ins></b></h2>
 <p>
 <p></p>
-<form action="Principal" method="POST">
+<form action="Proceso" method="POST">
 <p>Mensaje: <input type='text' name='mensaje' size = 45></p>
 </form>
 </body>
