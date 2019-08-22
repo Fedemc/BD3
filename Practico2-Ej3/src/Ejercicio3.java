@@ -32,7 +32,7 @@ public class Ejercicio3
 			System.out.println("Ocurrió un error: " + ioEx.toString());
 		}
 		
-		while(consulta!="exit")
+		while(!consulta.contentEquals("exit"))
 		{
 			error="";
 			try
@@ -57,7 +57,7 @@ public class Ejercicio3
 				
 				stmt.close();
 				con.close();
-				consulta=br.readLine();
+				
 			}
 			catch (ClassNotFoundException e)
 			{
@@ -79,6 +79,16 @@ public class Ejercicio3
 			if(error!="")
 			{
 				System.out.println("Ocurrió un error: " + error);
+			}
+			
+			try 
+			{
+				System.out.println("Ingrese comando: ");
+				consulta=br.readLine();
+			}
+			catch (IOException ioEx)
+			{
+				System.out.println("Ocurrió un error: " + ioEx.toString());
 			}
 		}
 		System.out.println("Hasta la próxima!");
