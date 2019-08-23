@@ -49,7 +49,8 @@ public class Ejercicio2
 			consulta="CREATE TABLE Personas ("
 					+ "cedula INT NOT NULL,"
 					+ "nombre VARCHAR(45),"
-					+ "apellido VARCHAR(45))";
+					+ "apellido VARCHAR(45),"
+					+ "PRIMARY KEY (cedula))";
 			resultado=stmt.executeUpdate(consulta);
 			System.out.println("Tabla Personas creada: " + resultado);
 			
@@ -57,6 +58,7 @@ public class Ejercicio2
 			consulta="CREATE TABLE Maestras ("
 					+ "cedula INT NOT NULL,"
 					+ "grupo VARCHAR(45),"
+					+ "PRIMARY KEY (cedula),"
 					+ "FOREIGN KEY (cedula) REFERENCES Personas(cedula)"
 					+ ")";
 			resultado=stmt.executeUpdate(consulta);

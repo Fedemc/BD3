@@ -35,6 +35,7 @@ public class Ejercicio3
 		while(!consulta.contentEquals("exit"))
 		{
 			error="";
+			int filas=0;
 			try
 			{
 				/* Obtengo los datos de conexión desde el archivo de configuración */
@@ -53,7 +54,7 @@ public class Ejercicio3
 				Connection con = DriverManager.getConnection(url, usuario, password);
 					
 				Statement stmt=con.createStatement();
-				stmt.executeUpdate(consulta);
+				filas=stmt.executeUpdate(consulta);
 				
 				stmt.close();
 				con.close();
@@ -79,6 +80,10 @@ public class Ejercicio3
 			if(error!="")
 			{
 				System.out.println("Ocurrió un error: " + error);
+			}
+			else
+			{
+				System.out.println("Cantidad de filas afectadas: " + filas);
 			}
 			
 			try 
