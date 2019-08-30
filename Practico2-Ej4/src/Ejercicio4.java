@@ -85,6 +85,9 @@ public class Ejercicio4
 				cedulasMaestras.add(cedula);
 			}
 			
+			rs.close();
+			stmt.close();
+			
 			int cantAlumnos=0;
 			int cantAlumnosMax=0;
 			int cedMayor=0;
@@ -111,16 +114,18 @@ public class Ejercicio4
 			}
 			
 			// De la maestra con la mayor cant de alumnos me traigo nombre y apellido
-			consulta="select nombre, apellido, cedula"
-					+ "from personas"
-					+ "where cedula=" + cedMayor;
-			rs=stmt.executeQuery(consulta);
+			consulta="select *"
+					+ " from personas"
+					+ " where cedula = ? ;";
+			PreparedStatement pstmt=con.prepareStatement(consulta);
+			pstmt.setString(1, Integer.toString(cedMayor));
+			ResultSet rst=pstmt.executeQuery();
 			String nombre=new String();
 			String apellido=new String();
-			while(rs.next())
+			while(rst.next())
 			{
-				nombre=rs.getString("nombre");
-				apellido=rs.getString("apellido");
+				nombre=rst.getString("nombre");
+				apellido=rst.getString("apellido");
 			}
 			
 			System.out.println("--- Maestra con mas alumnos ---"
@@ -128,8 +133,8 @@ public class Ejercicio4
 					+ "\nNombre: " + nombre
 					+ "\nApellido: " + apellido);
 			
-			rs.close();			
-			stmt.close();
+			rst.close();			
+			pstmt.close();
 			con.close();
 			
 		}
