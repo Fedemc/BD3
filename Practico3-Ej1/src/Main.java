@@ -42,13 +42,21 @@ public class Main
 			
 			System.out.print("Creando BD y tablas.\n");
 			Statement stmt=con.createStatement();
-			int resultado=stmt.executeUpdate(consultaCrearBD);
+			int resultado=0;
+			//resultado=stmt.executeUpdate(consultaCrearBD);
 			System.out.println("DB creada: " + resultado);
 			stmt.executeQuery("Use EscuelaPractico3;");
-			resultado=stmt.executeUpdate(consultaCrearTablaExamenes);
+			//resultado=stmt.executeUpdate(consultaCrearTablaExamenes);
 			System.out.println("Tabla examenes creada.");
-			resultado=stmt.executeUpdate(consultaCrearTablaResultados);
+			//resultado=stmt.executeUpdate(consultaCrearTablaResultados);
 			System.out.println("Tabla resultados creada.");
+			
+			String consultaCrearDatosExamenes = "INSERT INTO Examenes"
+					+ " values ('MD2012Dic','Matemática discreta','Diciembre 2012'), "
+					+ "('P12012Dic','Programación','Diciembre 2012'), "
+					+ "('BD2012Dic','Bases de datos','Diciembre 2012'), "
+					+ "('MD2013Feb','Matemática discreta','Febrero 2013');";
+			stmt.executeUpdate(consultaCrearDatosExamenes);
 			stmt.close();
 			con.close();
 		}
