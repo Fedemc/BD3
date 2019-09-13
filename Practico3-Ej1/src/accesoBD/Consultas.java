@@ -13,5 +13,4 @@ public class Consultas
 		String consultaInsertarResultado = "INSERT INTO RESULTADOS VALUES (?,?,?);";
 		return consultaInsertarResultado;
 	}
-
 }

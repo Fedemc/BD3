@@ -1,18 +1,18 @@
 package accesoBD;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ArrayList;
 
 public class AccesoBD 
 {
 	public List<Examen> ListarExamenes(Connection con) throws SQLException
 	{
-		List<Examen> listaExamenes=null;
+		List<Examen> listaExamenes = new ArrayList<Examen>();
 		
 		//Traerse lista de examenes, a cada resultado insertarlo en la lista
 		try
@@ -23,9 +23,9 @@ public class AccesoBD
 			{
 				// Codigo, materia y período
 				Examen exam = new Examen();
-				exam.SetCodigo(rst.getString(0));
-				exam.SetMateria(rst.getString(1));
-				exam.SetPeriodo(rst.getString(2));
+				exam.SetCodigo(rst.getString(1));
+				exam.SetMateria(rst.getString(2));
+				exam.SetPeriodo(rst.getString(3));
 				listaExamenes.add(exam);
 			}
 			
@@ -40,23 +40,16 @@ public class AccesoBD
 		return listaExamenes;
 	}
 	
-	public void IngresarResultado(Connection con, Resultado resu)
+	public void IngresarResultado(Connection con, Resultado resu) throws SQLException
 	{
-		try
-		{
-			PreparedStatement pstmt=con.prepareStatement(Consultas.InsertarResultado());
-			//cedula int, codigo string, calificacion int
-			pstmt.setInt(0, resu.GetCedula());
-			pstmt.setString(1, resu.GetCodigo());
-			pstmt.setInt(2, resu.GetCalificacion());
-			
-			pstmt.executeUpdate();
-			
-			pstmt.close();			
-		}
-		catch(SQLException sqlExc)
-		{
-			System.out.println(sqlExc.toString());
-		}
+		PreparedStatement pstmt=con.prepareStatement(Consultas.InsertarResultado());
+		//cedula int, codigo string, calificacion int
+		pstmt.setInt(1, resu.GetCedula());
+		pstmt.setString(2, resu.GetCodigo());
+		pstmt.setInt(3, resu.GetCalificacion());
+		
+		pstmt.executeUpdate();
+		
+		pstmt.close();			
 	}
 }
