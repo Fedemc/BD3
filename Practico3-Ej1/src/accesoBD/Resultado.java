@@ -7,6 +7,14 @@ public class Resultado
 	private String codigo;
 	private int calificacion;
 	
+	// Constructor
+	public Resultado(int ced, String cod, int cal)
+	{
+		this.cedula = ced;
+		this.codigo = cod;
+		this.calificacion = cal;
+	}
+	
 	public void SetCedula(int nuevaCedula)
 	{
 		this.cedula=nuevaCedula;

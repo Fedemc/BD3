@@ -13,4 +13,10 @@ public class Consultas
 		String consultaInsertarResultado = "INSERT INTO RESULTADOS VALUES (?,?,?);";
 		return consultaInsertarResultado;
 	}
+	
+	public static String ListarResultados()
+	{
+		String consultaListarResultados = "SELECT * FROM resultados where cedula=?";
+		return consultaListarResultados;
+	}
 }

@@ -83,13 +83,6 @@ public class VentanaResultados {
 		frmResultados.getContentPane().add(txtCalificacion);
 		txtCalificacion.setColumns(10);
 		
-		JLabel lblErrores = new JLabel("");
-		lblErrores.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblErrores.setForeground(Color.RED);
-		lblErrores.setVerticalAlignment(SwingConstants.TOP);
-		lblErrores.setBounds(292, 157, 235, 72);
-		frmResultados.getContentPane().add(lblErrores);
-		
 		JButton btnIngresarResultado = new JButton("Ingresar Resultado");
 		btnIngresarResultado.setBounds(294, 84, 171, 40);
 		frmResultados.getContentPane().add(btnIngresarResultado);
@@ -132,7 +125,7 @@ public class VentanaResultados {
 		}
 		catch(SQLException sExc)
 		{
-			lblErrores.setText(sExc.toString());
+			JOptionPane.showMessageDialog(frmResultados, sExc.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
 		btnIngresarResultado.addActionListener 
@@ -144,10 +137,7 @@ public class VentanaResultados {
 						int ced = Integer.parseInt(txtCedula.getText());
 						int calif = Integer.parseInt(txtCalificacion.getText());
 						
-						Resultado resu = new Resultado();
-						resu.SetCedula(ced);
-						resu.SetCalificacion(calif);
-						resu.SetCodigo(codigoExamen);
+						Resultado resu = new Resultado(ced, codigoExamen, calif);
 						try
 						{
 							abd.IngresarResultado(conexion, resu);
