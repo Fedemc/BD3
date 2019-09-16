@@ -31,6 +31,7 @@ public class AccesoBD
 			
 			rst.close();
 			stmt.close();
+			con.commit();
 		}
 		catch(SQLException sqlExc)
 		{
@@ -50,6 +51,12 @@ public class AccesoBD
 		
 		pstmt.executeUpdate();
 		
-		pstmt.close();			
+		pstmt.close();
+		con.commit();
+	}
+	
+	public void CerrarConexion(Connection con) throws SQLException 
+	{
+		con.close();
 	}
 }

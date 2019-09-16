@@ -94,6 +94,25 @@ public class VentanaResultados {
 		btnIngresarResultado.setBounds(294, 84, 171, 40);
 		frmResultados.getContentPane().add(btnIngresarResultado);
 		
+		// Cierro la conexion a la DB cuando cierro la ventana
+		frmResultados.addWindowListener(new WindowAdapter()
+				{
+					public void windowClosing(WindowEvent e)
+					{
+						try
+						{
+							abd.CerrarConexion(conexion);
+						}
+						catch(SQLException sE)
+						{
+							JOptionPane.showMessageDialog(frmResultados, sE.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+						}
+						
+					}
+				}
+			);
+		
+		
 		List<Examen> listaExamenesDevuelta=null;
 		try
 		{

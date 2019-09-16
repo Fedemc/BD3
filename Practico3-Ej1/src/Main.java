@@ -55,11 +55,10 @@ public class Main
 			
 			DatabaseMetaData dbmtd=con.getMetaData();
 			ResultSet rstDB = dbmtd.getSchemas(null, "escuelapractico3");
+			con.setAutoCommit(false);
+			con.setTransactionIsolation(con.TRANSACTION_SERIALIZABLE);
 			if(rstDB.next())
-			{
-				con.setAutoCommit(false);
-				con.setTransactionIsolation(con.TRANSACTION_SERIALIZABLE);
-				
+			{		
 				String consultaCrearBD="CREATE DATABASE escuelapractico3;";
 				String consultaCrearTablaExamenes = "CREATE TABLE examenes("
 						+ "codigo VARCHAR(45), materia VARCHAR(45), periodo VARCHAR(45),"
@@ -113,17 +112,6 @@ public class Main
 			}
 			
 			error= e.toString();
-		}
-		finally
-		{
-			try
-			{
-				con.close();
-			}
-			catch (SQLException ex)
-			{
-				error=ex.toString();
-			}
 		}
 	}
 }
