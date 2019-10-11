@@ -1,6 +1,7 @@
 package logicaPersistencia;
 
-public class fachada 
+public class Fachada 
 {
+	
 	
 }
