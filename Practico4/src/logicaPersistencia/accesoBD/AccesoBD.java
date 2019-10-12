@@ -25,10 +25,19 @@ public class AccesoBD
 		pstmt.close();
 	}
 	
-	public void InscribirDragQueen(Connection con, int nroPart, String nombre, int nroTemp) throws SQLException
+	public void InscribirDragQueen(Connection con, String nombre, int nroTemp) throws SQLException
 	{
+		int nroPart = 0;
+		String cantParticipantesQuery = Consultas.CantParticipantesTemp();
+		PreparedStatement pstmt = con.prepareStatement(cantParticipantesQuery);
+		pstmt.setInt(1, nroTemp);
+		ResultSet rs = pstmt.executeQuery();
+		if(rs.next())
+		{
+			nroPart = rs.getInt("cantParticipantes");
+		}
 		String query = Consultas.InscribirDragQueen();
-		PreparedStatement pstmt = con.prepareStatement(query);
+		pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroPart);
 		pstmt.setString(2, nombre);
 		pstmt.setInt(3, nroTemp);
@@ -54,15 +63,15 @@ public class AccesoBD
 		return resu;
 	}
 	
-	public List<VODragQueen> ListarDragQueens(Connection con) throws SQLException
+	public List<VODragQueenVictorias> ListarDragQueens(Connection con) throws SQLException
 	{
-		List<VODragQueen> resu = new ArrayList<VODragQueen>();
+		List<VODragQueenVictorias> resu = new ArrayList<VODragQueenVictorias>();
 		String query = Consultas.ListarDragQueens();
 		Statement stmt=con.createStatement();
 		ResultSet rs = stmt.executeQuery(query);
 		while(rs.next())
 		{
-			VODragQueen voDQ = new VODragQueen(rs.getString("nombre"), rs.getInt("nroTemp"));
+			VODragQueenVictorias voDQ = new VODragQueenVictorias(rs.getString("nombre"), rs.getInt("nroTemp"), rs.getInt("nroPart"), rs.getInt("cantVictorias"));
 			resu.add(voDQ);
 		}
 		

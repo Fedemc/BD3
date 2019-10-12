@@ -10,7 +10,7 @@ public class Consultas
 	
 	public static String InscribirDragQueen()
 	{
-		String query = "INSERT INTO DragQueens (?,?,?)";
+		String query = "INSERT INTO DragQueens(nroPart, nombre, nroTemp) VALUES (?,?,?)";
 		return query;
 	}
 	

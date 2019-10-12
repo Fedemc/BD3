@@ -29,7 +29,6 @@ public class VODragQueen
 	public void setNroTemp(int nroTemp)
 	{
 		this.nroTemp = nroTemp;
-	}
-	
+	}	
 	
 }

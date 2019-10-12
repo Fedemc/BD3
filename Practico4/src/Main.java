@@ -1,14 +1,18 @@
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import logicaPersistencia.Fachada;
 
 public class Main 
 {
@@ -19,6 +23,7 @@ public class Main
 		String url=null;
 		String usuario=null;
 		String password=null;
+		String db=null;
 		Connection con=null;
 		
 		try
@@ -31,6 +36,7 @@ public class Main
 			url = p.getProperty("url");
 			usuario=p.getProperty("user");
 			password=p.getProperty("password");
+			db=p.getProperty("DB");
 
 			Class.forName(driver);
 		}
@@ -53,12 +59,22 @@ public class Main
 			con = DriverManager.getConnection(url, usuario, password);
 			
 			DatabaseMetaData dbmtd=con.getMetaData();
-			ResultSet rstDB = dbmtd.getSchemas(null, "dbDQ");
+			ResultSet rstDB = dbmtd.getCatalogs();
 			con.setAutoCommit(false);
 			con.setTransactionIsolation(con.TRANSACTION_SERIALIZABLE);
-			if(!rstDB.next())
+			boolean existe=false;
+			while(rstDB.next() && !existe)
+			{
+				String nombreDB = rstDB.getString(1);
+				if(nombreDB.equals(db))
+				{
+					existe=true;
+				}
+			}
+			
+			if(!existe)
 			{		
-				String consultaCrearBD="CREATE DATABASE dbDQ;";
+				String consultaCrearBD="CREATE DATABASE ?;";
 				String consultaCrearTablaTemporadas = "CREATE TABLE Temporadas("
 						+ "nroTemp INT, anio INT, cantCapitulos INT,"
 						+ "PRIMARY KEY (nroTemp));";
@@ -68,10 +84,14 @@ public class Main
 						+ ");";
 				
 				System.out.print("Creando BD y tablas.\n");
-				Statement stmt=con.createStatement();
-				stmt.executeUpdate(consultaCrearBD);
+				PreparedStatement pstmt=con.prepareStatement(consultaCrearBD);
+				pstmt.setString(1, db);
+				pstmt.executeUpdate(consultaCrearBD);
 				System.out.println("DB creada.");
-				stmt.executeQuery("Use dbDQ;");
+				pstmt=con.prepareStatement("Use ?;");
+				pstmt.setString(1, db);
+				pstmt.executeQuery();
+				Statement stmt=con.createStatement();
 				stmt.executeUpdate(consultaCrearTablaTemporadas);
 				System.out.println("Tabla Temporadas creada.");
 				stmt.executeUpdate(consultaCrearTablaDragQueens);
@@ -109,6 +129,17 @@ public class Main
 			}
 			
 			error= e.toString();
+		}
+		
+		System.out.println("Accediendo a Fachada");
+		Fachada fachada = Fachada.GetInstancia();
+		try
+		{
+			fachada.SetConnectionFachada(con);
+		}
+		catch(RemoteException rEx)
+		{
+			rEx.printStackTrace();
 		}
 	}
 }
