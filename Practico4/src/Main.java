@@ -97,22 +97,17 @@ public class Main
 				stmt.executeUpdate(consultaCrearTablaDragQueens);
 				System.out.println("Tabla DragQueens creada.");
 				
-				String consultaCrearDatosExamenes = "INSERT INTO Examenes"
-						+ " values ('MD2012Dic','Matemática discreta','Diciembre 2012'), "
-						+ "('P12012Dic','Programación','Diciembre 2012'), "
-						+ "('BD2012Dic','Bases de datos','Diciembre 2012'), "
-						+ "('MD2013Feb','Matemática discreta','Febrero 2013');";
-				//stmt.executeUpdate(consultaCrearDatosExamenes);
 				stmt.close();
 				con.commit();
 			}
 			else
 			{
 				System.out.println("Ya existe la DB.");
-				String usarBD="Use escuelapractico3;";
-				Statement stmt=con.createStatement();
-				stmt.executeQuery(usarBD);
-				stmt.close();
+				String usarBD="Use ?;";
+				PreparedStatement pstmt=con.prepareStatement(usarBD);
+				pstmt.setString(1, db);
+				pstmt.executeQuery(usarBD);
+				pstmt.close();
 			}
 			
 			con.setAutoCommit(false);

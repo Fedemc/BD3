@@ -130,7 +130,7 @@ public class AccesoBD
 		pstmt.close();
 	}
 	
-	public int NroPartDragQueenConMasVictorias(Connection con, int nroTemp) throws SQLException
+	public VODragQueenVictorias NroPartDragQueenConMasVictorias(Connection con, int nroTemp) throws SQLException
 	{
 		int nroPart = 0;
 		int mayor = 0;
@@ -147,10 +147,12 @@ public class AccesoBD
 				nroPart = rs.getInt("nroPart");
 			}
 		}
+		VODragQueen voDQ = this.DragQueenConNroPart(con, nroPart);
+		VODragQueenVictorias resu= new VODragQueenVictorias(voDQ.getNombre(), nroTemp, nroPart, mayor);
 		
 		rs.close();
 		pstmt.close();
-		return nroPart;
+		return resu;
 	}
 	
 	public VODragQueen DragQueenConNroPart(Connection con, int nroPart) throws SQLException

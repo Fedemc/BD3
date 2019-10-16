@@ -135,14 +135,138 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		return resu;
 	}
 	
-	/*
-	listarDragQueens(nroTemp:int): List<DragQueenVictorias>
-	tempMasParticipantes():VOTempMaxParts
-	registrarVictoria(nroTemp: int, nroPart:int):void
-	obtenerGanadora(nroTemp:int):VODragQueenVictorias
-	*/
+	// Verificar q al menos exista una temporada
+	public VOTempMaxPart TempMasParticipantes() throws RemoteException, PersistenciaException
+	{
+		int max = 0;
+		int nroTempMax = 0;
+		int cantParts = 0;
+		boolean error = false;
+		VOTempMaxPart resu = new VOTempMaxPart(1,1,1,1);
+		// Traerme todas las temporadas
+		// Ver cual tiene mas participantes
+		// Devolver nro Temp y ejecutar TempConNroTemp
+		List<VOTemporada> listaTemporadas = new ArrayList<VOTemporada>();
+		try
+		{
+			listaTemporadas = abd.ListarTemporadas(con);
+			if(listaTemporadas.isEmpty())
+			{
+				error=true;
+			}
+			else
+			{
+				for(VOTemporada t : listaTemporadas)
+				{
+					int nroTemp = t.getNroTemp();
+					int cantParticipantes = abd.CantParticipantesTemp(con, nroTemp);
+					if(cantParticipantes > max)
+					{
+						max = cantParticipantes;
+						nroTempMax = nroTemp;
+						cantParts = cantParticipantes;
+					}
+				}
+				
+				// Me traigo el VO de la temporada con mas participantes
+				VOTemporada voT = abd.TempConNroTemp(con, nroTempMax);
+				resu = new VOTempMaxPart(voT.getAnio(), voT.getNroTemp(), voT.getCantCapitulos(), cantParts);
+			}
+		}
+		catch(SQLException sqlEx)
+		{
+			String msj = "Error de SQL: " + sqlEx.getMessage();
+			throw new PersistenciaException(msj);
+		}
+		
+		if(error)
+		{	
+			String msj = "ERROR: No existen Temporadas registradas en el sistema.";
+			throw new PersistenciaException(msj);
+		}
+		
+		return resu;
+	}
 	
+	public void RegistrarVictoria(int nroTemp, int nroPart) throws RemoteException, PersistenciaException
+	{
+		boolean errorVOT=false, errorVODQ=false;
+		
+		try
+		{
+			VOTemporada voT = abd.TempConNroTemp(con, nroTemp);
+			if(voT.equals(null))
+			{
+				errorVOT = true;
+			}
+			VODragQueen voDQ = abd.DragQueenConNroPart(con, nroPart);
+			if(voDQ.equals(null))
+			{
+				errorVODQ = true;
+			}
+			
+			if(errorVOT)
+			{
+				String msj = "ERROR: No existe una Temporada con el nroTemp(" + nroTemp + ") en el sistema";
+				throw new PersistenciaException(msj);
+			}
+			
+			if(errorVOT)
+			{
+				String msj = "ERROR: No existe una Temporada con el nroTemp(" + nroTemp + ") en el sistema";
+				throw new PersistenciaException(msj);
+			}
+			
+			abd.RegistrarVictoria(con, nroTemp, nroPart);
+		}
+		catch(SQLException sqlEx)
+		{
+			String msj = "Error de SQL: " + sqlEx.getMessage();
+			throw new PersistenciaException(msj);
+		}
+	}
 	
-	
+	public VODragQueenVictorias ObtenerGanadora(int nroTemp) throws RemoteException, PersistenciaException
+	{
+		VODragQueenVictorias resu = new VODragQueenVictorias("",1,1,1);
+		boolean errorVOT = false, errorNoHayDQs = false;
+		try
+		{
+			VOTemporada voT = abd.TempConNroTemp(con, nroTemp);
+			if(voT.equals(null))
+			{
+				errorVOT = true;
+			}
+			
+			int cantParticipantes = 0;
+			cantParticipantes = abd.CantParticipantesTemp(con, nroTemp);
+			if(cantParticipantes == 0)
+			{
+				errorNoHayDQs = true;
+			}
+			
+			if(errorVOT)
+			{
+				String msj = "ERROR: No existe una Temporada con el nroTemp(" + nroTemp + ") en el sistema.";
+				throw new PersistenciaException(msj);
+			}
+			
+			if(errorVOT)
+			{
+				String msj = "ERROR: La Temporada con el nroTemp(" + nroTemp + ") no tiene participantes registrados.";
+				throw new PersistenciaException(msj);
+			}
+			
+			resu = abd.NroPartDragQueenConMasVictorias(con, nroTemp);
+			
+		}
+		catch(SQLException sqlEx)
+		{
+			String msj = "Error de SQL: " + sqlEx.getMessage();
+			throw new PersistenciaException(msj);
+		}
+		
+		return resu;
+	}
 	
 }
