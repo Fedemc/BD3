@@ -2,6 +2,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.Naming;
+import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -103,14 +106,15 @@ public class Main
 			else
 			{
 				System.out.println("Ya existe la DB.");
-				String usarBD="Use ?;";
+				String usarBD="use ?";
 				PreparedStatement pstmt=con.prepareStatement(usarBD);
 				pstmt.setString(1, db);
-				pstmt.executeQuery(usarBD);
+				pstmt.executeQuery();
 				pstmt.close();
+				con.commit();
 			}
 			
-			con.setAutoCommit(false);
+			//con.setAutoCommit(false);
 		}
 		catch (SQLException e)
 		{
@@ -126,15 +130,43 @@ public class Main
 			error= e.toString();
 		}
 		
-		System.out.println("Accediendo a Fachada");
-		Fachada fachada = Fachada.GetInstancia();
+		
 		try
 		{
+			System.out.println("Accediendo a Fachada");
+			//Obtengo datos de config de server
+			Properties p=new Properties();
+			String nomArch="config/config.properties";
+			p.load(new FileInputStream(nomArch));
+			String ip=p.getProperty("ipServidor");
+			String puerto=p.getProperty("puertoServidor");
+			int port = Integer.parseInt(puerto);
+			
+			//Pongo a correr el rmiregistry
+			LocateRegistry.createRegistry(port);
+			
+			//publico el objeto remoto en dicha ip y puerto
+			String ruta="//"+ip+":"+puerto+"/fachada";
+			Fachada fachada=Fachada.GetInstancia();
 			fachada.SetConnectionFachada(con);
+			Naming.rebind(ruta, fachada);
+			System.out.println("Servidor en linea");
 		}
-		catch(RemoteException rEx)
+		catch(RemoteException rE)
 		{
-			rEx.printStackTrace();
+			rE.printStackTrace();
 		}
+		catch(MalformedURLException mEx)
+		{
+			mEx.printStackTrace();
+		}
+		catch(FileNotFoundException fnotfEx)
+		{
+			fnotfEx.printStackTrace();
+		}
+		catch(IOException ioEx)
+		{
+			ioEx.printStackTrace();
+		}	
 	}
 }

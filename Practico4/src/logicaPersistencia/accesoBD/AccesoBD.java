@@ -23,6 +23,7 @@ public class AccesoBD
 		pstmt.executeUpdate();
 		
 		pstmt.close();
+		con.commit();
 	}
 	
 	public void InscribirDragQueen(Connection con, String nombre, int nroTemp) throws SQLException
@@ -44,6 +45,7 @@ public class AccesoBD
 		pstmt.executeUpdate();
 		
 		pstmt.close();
+		con.commit();
 	}
 	
 	public List<VOTemporada> ListarTemporadas(Connection con) throws SQLException
@@ -83,16 +85,14 @@ public class AccesoBD
 	/* Verificar que exista el nroTemp en la tabla antes de ejecutar la consulta */
 	public VOTemporada TempConNroTemp(Connection con, int nroTemp) throws SQLException
 	{
-		VOTemporada resu = new VOTemporada(1,1,1);
+		VOTemporada resu = null;
 		String query = Consultas.TempConNroTemp();
 		PreparedStatement pstmt=con.prepareStatement(query);
 		pstmt.setInt(1, nroTemp);
 		ResultSet rs=pstmt.executeQuery();
 		if(rs.next())
 		{
-			resu.setNroTemp(rs.getInt("nroTemp"));
-			resu.setAnio(rs.getInt("anio"));
-			resu.setCantCapitulos(rs.getInt("cantCapitulos"));
+			resu = new VOTemporada(rs.getInt("nroTemp"), rs.getInt("anio"), rs.getInt("cantCapitulos"));
 		}
 		
 		rs.close();
@@ -157,15 +157,14 @@ public class AccesoBD
 	
 	public VODragQueen DragQueenConNroPart(Connection con, int nroPart) throws SQLException
 	{
-		VODragQueen resu = new VODragQueen("", 1);
+		VODragQueen resu = null;
 		String query = Consultas.DragQueenConNroPart();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroPart);
 		ResultSet rs = pstmt.executeQuery();
 		if(rs.next())
 		{
-			resu.setNombre(rs.getString("nombre"));
-			resu.setNroTemp(rs.getInt("nroTemp"));
+			resu = new VODragQueen(rs.getString("nombre"), rs.getInt("nroTemp"));
 		}
 		
 		return resu;

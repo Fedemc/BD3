@@ -1,6 +1,8 @@
 package logicaPersistencia.valueObjects;
 
-public class VOTemporada 
+import java.io.Serializable;
+
+public class VOTemporada implements Serializable
 {
 	private int nroTemp;
 	private int anio;

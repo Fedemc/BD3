@@ -1,6 +1,8 @@
 package logicaPersistencia.valueObjects;
 
-public class VOTempMaxPart extends VOTemporada
+import java.io.Serializable;
+
+public class VOTempMaxPart extends VOTemporada implements Serializable
 {
 	private int cantParticipantes;
 	

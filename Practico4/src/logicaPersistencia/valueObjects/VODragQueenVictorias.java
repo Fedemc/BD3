@@ -1,6 +1,8 @@
 package logicaPersistencia.valueObjects;
 
-public class VODragQueenVictorias extends VODragQueen
+import java.io.Serializable;
+
+public class VODragQueenVictorias extends VODragQueen implements Serializable
 {
 	private int nroPart;
 	private int cantVictorias;

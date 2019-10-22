@@ -1,11 +1,15 @@
 package grafica.ventanas;
 
+import grafica.controladores.ContVentanaNuevaTemporada;
+
+import java.awt.event.*;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 public class VentanaNuevaTemporada
 {
@@ -15,6 +19,7 @@ public class VentanaNuevaTemporada
 	private JTextField txtAnio;
 	private JTextField txtCantCapitulos;
 	private JButton btnRegistrarNuevaTemporada;
+	private ContVentanaNuevaTemporada cont;
 
 	/**
 	 * Launch the application.
@@ -87,11 +92,36 @@ public class VentanaNuevaTemporada
 		btnRegistrarNuevaTemporada.setBounds(64, 176, 89, 23);
 		frmNuevaTemporada.getContentPane().add(btnRegistrarNuevaTemporada);
 		
+		cont = new ContVentanaNuevaTemporada(this);		
+		
+		btnRegistrarNuevaTemporada.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				String nroTemp = txtNroTemporada.getText();
+				String anio = txtAnio.getText();
+				String cantCaps = txtCantCapitulos.getText();
+				cont.InscribirNuevaTemporada(Integer.parseInt(nroTemp), Integer.parseInt(anio), Integer.parseInt(cantCaps));
+			}
+			
+		});
+		
 		frmNuevaTemporada.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	public void setVisible(boolean valor)
 	{
 		frmNuevaTemporada.setVisible(valor);
+	}
+	
+	public void mostrarError(String res)
+	{
+		JOptionPane.showMessageDialog(frmNuevaTemporada, res, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+	
+	public void mostrarResultado(String res)
+	{
+		
+		JOptionPane.showMessageDialog(frmNuevaTemporada, res, "Resultado", JOptionPane.INFORMATION_MESSAGE);
+		frmNuevaTemporada.dispose();
 	}
 }

@@ -1,6 +1,8 @@
 package logicaPersistencia.valueObjects;
 
-public class VODragQueen
+import java.io.Serializable;
+
+public class VODragQueen implements Serializable
 {
 	private String nombre;
 	private int nroTemp;

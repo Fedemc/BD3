@@ -4,7 +4,7 @@ public class Consultas
 {
 	public static String NuevaTemporada()
 	{
-		String query = "INSERT INTO Temporadas (?,?,?)";
+		String query = "INSERT INTO Temporadas VALUES (?,?,?)";
 		return query;
 	}
 	

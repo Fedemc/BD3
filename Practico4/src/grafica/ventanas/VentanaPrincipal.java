@@ -11,12 +11,14 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import grafica.ventanas.*;
+import grafica.controladores.ContPrincipal;
 
 public class VentanaPrincipal
 {
 
 	private JFrame frmRu;
-
+	private ContPrincipal cont;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -109,5 +111,8 @@ public class VentanaPrincipal
 		JLabel lblOperacionesConDragqueens = new JLabel("Operaciones con DragQueens");
 		lblOperacionesConDragqueens.setBounds(421, 12, 155, 14);
 		frmRu.getContentPane().add(lblOperacionesConDragqueens);
+		
+		cont = ContPrincipal.GetInstancia();
+		
 	}
 }
