@@ -77,7 +77,7 @@ public class Main
 			
 			if(!existe)
 			{		
-				String consultaCrearBD="CREATE DATABASE ?;";
+				String consultaCrearBD="CREATE DATABASE "+db;
 				String consultaCrearTablaTemporadas = "CREATE TABLE Temporadas("
 						+ "nroTemp INT, anio INT, cantCapitulos INT,"
 						+ "PRIMARY KEY (nroTemp));";
@@ -87,14 +87,11 @@ public class Main
 						+ ");";
 				
 				System.out.print("Creando BD y tablas.\n");
-				PreparedStatement pstmt=con.prepareStatement(consultaCrearBD);
-				pstmt.setString(1, db);
-				pstmt.executeUpdate(consultaCrearBD);
-				System.out.println("DB creada.");
-				pstmt=con.prepareStatement("Use ?;");
-				pstmt.setString(1, db);
-				pstmt.executeQuery();
 				Statement stmt=con.createStatement();
+				stmt.executeUpdate(consultaCrearBD);
+				System.out.println("DB "+db+" creada.");
+				stmt.executeQuery("Use "+db);
+				System.out.println("Utilizando DB: "+db);
 				stmt.executeUpdate(consultaCrearTablaTemporadas);
 				System.out.println("Tabla Temporadas creada.");
 				stmt.executeUpdate(consultaCrearTablaDragQueens);
@@ -106,11 +103,10 @@ public class Main
 			else
 			{
 				System.out.println("Ya existe la DB.");
-				String usarBD="use ?";
-				PreparedStatement pstmt=con.prepareStatement(usarBD);
-				pstmt.setString(1, db);
-				pstmt.executeQuery();
-				pstmt.close();
+				String usarBD="use "+db;
+				Statement stmt=con.createStatement();
+				stmt.executeQuery(usarBD);
+				stmt.close();
 				con.commit();
 			}
 			
@@ -128,6 +124,7 @@ public class Main
 			}
 			
 			error= e.toString();
+			System.out.println(error);
 		}
 		
 		
