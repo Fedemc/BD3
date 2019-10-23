@@ -1,32 +1,34 @@
 package grafica.controladores;
 
 import grafica.controladores.ContPrincipal;
+import grafica.ventanas.VentanaListarTemporadas;
 import grafica.ventanas.VentanaNuevaTemporada;
 import logicaPersistencia.IFachada;
 import logicaPersistencia.excepciones.PersistenciaException;
 import logicaPersistencia.valueObjects.VOTemporada;
 
 import java.rmi.RemoteException;
+import java.util.List;
+import java.util.ArrayList;
 
-
-public class ContVentanaNuevaTemporada
+public class ContVentanaListarTemporadas
 {
 	private IFachada iFachada;
-	private VentanaNuevaTemporada vent;
+	private VentanaListarTemporadas vent;
 	
-	public ContVentanaNuevaTemporada(VentanaNuevaTemporada v)
+	public ContVentanaListarTemporadas(VentanaListarTemporadas v)
 	{
 		vent = v;
 		iFachada = ContPrincipal.GetInstancia().GetIFachada();
 	}
 	
-	public void InscribirNuevaTemporada(int nroT, int anio, int cantCaps)
+	public void ListarTemporadas()
 	{
-		VOTemporada voT = new VOTemporada(nroT,anio,cantCaps);
+		List<VOTemporada> lista = new ArrayList<VOTemporada>();
 		try
 		{
-			iFachada.NuevaTemporada(voT);
-			vent.mostrarResultado("Temporada ingresada correctamente");
+			lista = iFachada.ListarTemporadas();
+			vent.ListarTemporadas(lista);
 		}
 		catch(PersistenciaException pEx)
 		{

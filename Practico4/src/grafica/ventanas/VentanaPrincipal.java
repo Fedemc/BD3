@@ -78,6 +78,15 @@ public class VentanaPrincipal
 		JButton btnListarTemporadas = new JButton("Listar Temporadas");
 		btnListarTemporadas.setBounds(48, 47, 121, 23);
 		panel.add(btnListarTemporadas);
+		btnListarTemporadas.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						VentanaListarTemporadas ventListarTemp = new VentanaListarTemporadas();
+						ventListarTemp.setVisible(true);
+					}
+				});
+		
 		
 		JButton btnTempMasParticipantes = new JButton("Temporada con mas participantes");
 		btnTempMasParticipantes.setBounds(10, 81, 193, 23);
