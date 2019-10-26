@@ -77,7 +77,7 @@ public class Main
 			
 			if(!existe)
 			{		
-				String consultaCrearBD="CREATE DATABASE "+db;
+				String consultaCrearBD="CREATE DATABASE "+ db;
 				String consultaCrearTablaTemporadas = "CREATE TABLE Temporadas("
 						+ "nroTemp INT, anio INT, cantCapitulos INT,"
 						+ "PRIMARY KEY (nroTemp));";
