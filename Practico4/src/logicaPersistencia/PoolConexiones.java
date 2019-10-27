@@ -36,13 +36,16 @@ public class PoolConexiones implements IPoolConexiones
 			String nomArch="config/config.properties";
 			p.load(new FileInputStream(nomArch));
 			driver=p.getProperty("driver");
+			String nombreDB = p.getProperty("DB");
 			url = p.getProperty("url");
+			url=url+"/"+nombreDB;
 			user=p.getProperty("user");
 			pwd=p.getProperty("password");
 			tamanio=Integer.parseInt(p.getProperty("nroMaxConexiones"));
 			creadas=0;
 			tope=0;
 			conexiones = new Conexion[tamanio];
+			nivelTransaccionalidad = 8;			// TODO: Hacer que lo lea desde Property
 
 			Class.forName(driver);
 		}
@@ -65,7 +68,7 @@ public class PoolConexiones implements IPoolConexiones
 	}
 	
 	
-	public IConexion ObtenerConexiones(boolean modifica) throws PersistenciaException
+	public synchronized IConexion ObtenerConexiones(boolean modifica) throws PersistenciaException
 	{
 		IConexion conexion=null;
 		boolean tengo = false;
@@ -82,6 +85,7 @@ public class PoolConexiones implements IPoolConexiones
 					{
 						Connection con = DriverManager.getConnection(url,user,pwd);
 						conexion = new Conexion(con);
+						creadas++;
 						tengo = true;
 					}
 					catch(SQLException sqlEx)
@@ -121,9 +125,42 @@ public class PoolConexiones implements IPoolConexiones
 		return conexion;
 	}
 	
-	public void LiberarConexion(IConexion conexion, boolean ok)
+	public synchronized void LiberarConexion(IConexion conexion, boolean ok) throws PersistenciaException
 	{
+		Connection con = conexion.GetConnection();
 		
+		if(ok)
+		{
+			try
+			{
+				con.commit();
+			}
+			catch(SQLException sqlEx)
+			{
+				String error= "Error al intentar hacer commit: " + sqlEx.toString();
+				throw new PersistenciaException(error);
+			}
+		}
+		else
+		{
+			try
+			{
+				con.rollback();
+			}
+			catch(SQLException sqlEx)
+			{
+				String error= "Error al intentar hacer rollback: " + sqlEx.toString();
+				throw new PersistenciaException(error);
+			}
+		}
+		
+		// Pregunto si hay espacio para poner la conexion en el arreglo
+		if(tope < tamanio)
+		{
+			tope++;
+			conexiones[tope] = (Conexion) conexion;
+			notify();
+		}
 	}
 	
 }

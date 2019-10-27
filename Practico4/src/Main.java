@@ -145,7 +145,6 @@ public class Main
 			//publico el objeto remoto en dicha ip y puerto
 			String ruta="//"+ip+":"+puerto+"/fachada";
 			Fachada fachada=Fachada.GetInstancia();
-			fachada.SetConnectionFachada(con);
 			Naming.rebind(ruta, fachada);
 			System.out.println("Servidor en linea");
 		}

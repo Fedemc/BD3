@@ -8,6 +8,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 import logicaPersistencia.accesoBD.AccesoBD;
 import logicaPersistencia.excepciones.*;
+import logicaPersistencia.IPoolConexiones;
 import logicaPersistencia.valueObjects.*;
 
 public class Fachada extends UnicastRemoteObject implements IFachada
@@ -15,11 +16,20 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	
 	private static Fachada instancia;
 	private AccesoBD abd;
-	private Connection con;
+	private IPoolConexiones pool;
 	
 	private Fachada() throws RemoteException
 	{
 		abd = new AccesoBD();
+		try
+		{
+			pool = new PoolConexiones();
+		}
+		catch(PersistenciaException pEx)
+		{
+			System.out.println(pEx.toString());
+		}
+		
 	}
 	
 	public static Fachada GetInstancia() 
@@ -40,19 +50,15 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		return instancia;
 	}
 	
-	public void SetConnectionFachada(Connection nuevaCon) throws RemoteException
-	{
-		con=nuevaCon;
-	}
-	
 	/* Registrar una nueva temporada */
 	public void NuevaTemporada(VOTemporada voT) throws RemoteException, PersistenciaException
 	{
 		int nroTemp = voT.getNroTemp();
 		boolean existe=false;
+		IConexion icon = pool.ObtenerConexiones(true);
 		try
 		{
-			VOTemporada voExiste = abd.TempConNroTemp(con, nroTemp);
+			VOTemporada voExiste = abd.TempConNroTemp(icon, nroTemp);
 			if(voExiste != null)
 			{
 				existe=true;
@@ -60,6 +66,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		}
 		catch(SQLException sqlEx)
 		{
+			pool.LiberarConexion(icon, false);
 			String error = "Error de SQL: " + sqlEx.getMessage();
 			throw new PersistenciaException(error);
 		}
@@ -70,31 +77,37 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			
 			try
 			{
-				abd.NuevaTemporada(con, nroTemp, anio, cantCaps);
+				abd.NuevaTemporada(icon, nroTemp, anio, cantCaps);
+				pool.LiberarConexion(icon, true);
 			}
 			catch(SQLException sqlEx)
 			{
+				pool.LiberarConexion(icon, false);
 				String error = "Error de SQL: " + sqlEx.getMessage();
 				throw new PersistenciaException(error);
 			}
 		}
 		else
 		{
-			throw new PersistenciaException("ERRORO: Ya existe una temporada con ese nro de temporada.");
+			pool.LiberarConexion(icon, false);
+			throw new PersistenciaException("ERROR: Ya existe una temporada con ese nro de temporada.");
 		}
 	}
 	
 	/* Inscribir una nueva DragQueen */
 	public void InscribirDragQueen(VODragQueen voD) throws RemoteException, PersistenciaException
 	{
+		IConexion icon = pool.ObtenerConexiones(true);
 		String nombre = voD.getNombre();
 		int nroTemp = voD.getNroTemp();
 		try
 		{
-			abd.InscribirDragQueen(con, nombre, nroTemp);
+			abd.InscribirDragQueen(icon, nombre, nroTemp);
+			pool.LiberarConexion(icon, true);
 		}
 		catch(SQLException sqlEx)
 		{
+			pool.LiberarConexion(icon, false);
 			String error = "Error de SQL: " + sqlEx.getMessage();
 			throw new PersistenciaException(error);
 		}
@@ -104,13 +117,26 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	public List<VOTemporada> ListarTemporadas() throws RemoteException, PersistenciaException
 	{
 		List<VOTemporada> resu = new ArrayList<VOTemporada>();
+		IConexion icon=null;
+		try
+		{
+			icon = pool.ObtenerConexiones(false);
+		}
+		catch(PersistenciaException pEx)
+		{
+			String error = "Error de SQL: " + pEx.getMessage();
+			throw new PersistenciaException(error);
+		}
+		
 		
 		try
 		{
-			resu = abd.ListarTemporadas(con);
+			resu = abd.ListarTemporadas(icon);
+			pool.LiberarConexion(icon, true);
 		}
 		catch(SQLException sqlEx)
 		{
+			pool.LiberarConexion(icon, false);
 			String error = "Error de SQL: " + sqlEx.getMessage();
 			throw new PersistenciaException(error);
 		}
@@ -124,7 +150,8 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		List<VODragQueenVictorias> resu = new ArrayList<VODragQueenVictorias>();
 		try
 		{
-			resu = abd.ListarDragQueens(con);
+			IConexion icon = pool.ObtenerConexiones(false);
+			resu = abd.ListarDragQueens(icon);
 		}
 		catch(SQLException sqlEx)
 		{
@@ -149,7 +176,8 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		List<VOTemporada> listaTemporadas = new ArrayList<VOTemporada>();
 		try
 		{
-			listaTemporadas = abd.ListarTemporadas(con);
+			IConexion icon = pool.ObtenerConexiones(false);
+			listaTemporadas = abd.ListarTemporadas(icon);
 			if(listaTemporadas.isEmpty())
 			{
 				error=true;
@@ -159,7 +187,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				for(VOTemporada t : listaTemporadas)
 				{
 					int nroTemp = t.getNroTemp();
-					int cantParticipantes = abd.CantParticipantesTemp(con, nroTemp);
+					int cantParticipantes = abd.CantParticipantesTemp(icon, nroTemp);
 					if(cantParticipantes > max)
 					{
 						max = cantParticipantes;
@@ -169,7 +197,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				}
 				
 				// Me traigo el VO de la temporada con mas participantes
-				VOTemporada voT = abd.TempConNroTemp(con, nroTempMax);
+				VOTemporada voT = abd.TempConNroTemp(icon, nroTempMax);
 				resu = new VOTempMaxPart(voT.getAnio(), voT.getNroTemp(), voT.getCantCapitulos(), cantParts);
 			}
 		}
@@ -194,12 +222,13 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		
 		try
 		{
-			VOTemporada voT = abd.TempConNroTemp(con, nroTemp);
+			IConexion icon = pool.ObtenerConexiones(false);
+			VOTemporada voT = abd.TempConNroTemp(icon, nroTemp);
 			if(voT.equals(null))
 			{
 				errorVOT = true;
 			}
-			VODragQueen voDQ = abd.DragQueenConNroPart(con, nroPart);
+			VODragQueen voDQ = abd.DragQueenConNroPart(icon, nroPart);
 			if(voDQ.equals(null))
 			{
 				errorVODQ = true;
@@ -217,7 +246,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				throw new PersistenciaException(msj);
 			}
 			
-			abd.RegistrarVictoria(con, nroTemp, nroPart);
+			abd.RegistrarVictoria(icon, nroTemp, nroPart);
 		}
 		catch(SQLException sqlEx)
 		{
@@ -232,14 +261,15 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		boolean errorVOT = false, errorNoHayDQs = false;
 		try
 		{
-			VOTemporada voT = abd.TempConNroTemp(con, nroTemp);
+			IConexion icon = pool.ObtenerConexiones(false);
+			VOTemporada voT = abd.TempConNroTemp(icon, nroTemp);
 			if(voT.equals(null))
 			{
 				errorVOT = true;
 			}
 			
 			int cantParticipantes = 0;
-			cantParticipantes = abd.CantParticipantesTemp(con, nroTemp);
+			cantParticipantes = abd.CantParticipantesTemp(icon, nroTemp);
 			if(cantParticipantes == 0)
 			{
 				errorNoHayDQs = true;
@@ -257,7 +287,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				throw new PersistenciaException(msj);
 			}
 			
-			resu = abd.NroPartDragQueenConMasVictorias(con, nroTemp);
+			resu = abd.NroPartDragQueenConMasVictorias(icon, nroTemp);
 			
 		}
 		catch(SQLException sqlEx)

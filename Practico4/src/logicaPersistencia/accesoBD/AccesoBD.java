@@ -9,12 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logicaPersistencia.excepciones.PersistenciaException;
+import logicaPersistencia.IConexion;
 import logicaPersistencia.valueObjects.*;
 
 public class AccesoBD
 {
-	public void NuevaTemporada(Connection con, int nroTemp, int anio, int cantCapitulos) throws SQLException 
+	public void NuevaTemporada(IConexion icon, int nroTemp, int anio, int cantCapitulos) throws SQLException 
 	{
+		Connection con = icon.GetConnection();
 		String query = Consultas.NuevaTemporada();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroTemp);
@@ -26,8 +28,9 @@ public class AccesoBD
 		con.commit();
 	}
 	
-	public void InscribirDragQueen(Connection con, String nombre, int nroTemp) throws SQLException
+	public void InscribirDragQueen(IConexion icon, String nombre, int nroTemp) throws SQLException
 	{
+		Connection con = icon.GetConnection();
 		int nroPart = 0;
 		String cantParticipantesQuery = Consultas.CantParticipantesTemp();
 		PreparedStatement pstmt = con.prepareStatement(cantParticipantesQuery);
@@ -48,8 +51,9 @@ public class AccesoBD
 		con.commit();
 	}
 	
-	public List<VOTemporada> ListarTemporadas(Connection con) throws SQLException
+	public List<VOTemporada> ListarTemporadas(IConexion icon) throws SQLException
 	{
+		Connection con = icon.GetConnection();
 		List<VOTemporada> resu = new ArrayList<VOTemporada>();
 		String query = Consultas.ListarTemporadas();
 		Statement stmt=con.createStatement();
@@ -65,8 +69,9 @@ public class AccesoBD
 		return resu;
 	}
 	
-	public List<VODragQueenVictorias> ListarDragQueens(Connection con) throws SQLException
+	public List<VODragQueenVictorias> ListarDragQueens(IConexion icon) throws SQLException
 	{
+		Connection con = icon.GetConnection();
 		List<VODragQueenVictorias> resu = new ArrayList<VODragQueenVictorias>();
 		String query = Consultas.ListarDragQueens();
 		Statement stmt=con.createStatement();
@@ -83,8 +88,9 @@ public class AccesoBD
 	}
 	
 	/* Verificar que exista el nroTemp en la tabla antes de ejecutar la consulta */
-	public VOTemporada TempConNroTemp(Connection con, int nroTemp) throws SQLException
+	public VOTemporada TempConNroTemp(IConexion icon, int nroTemp) throws SQLException
 	{
+		Connection con = icon.GetConnection(); 
 		VOTemporada resu = null;
 		String query = Consultas.TempConNroTemp();
 		PreparedStatement pstmt=con.prepareStatement(query);
@@ -102,8 +108,9 @@ public class AccesoBD
 	}
 	
 	
-	public int CantParticipantesTemp(Connection con, int nroTemp) throws SQLException
+	public int CantParticipantesTemp(IConexion icon, int nroTemp) throws SQLException
 	{
+		Connection con = icon.GetConnection();
 		int resu=0;
 		String query = Consultas.CantParticipantesTemp();
 		PreparedStatement pstmt = con.prepareStatement(query);
@@ -120,8 +127,9 @@ public class AccesoBD
 		return resu;
 	}
 	
-	public void RegistrarVictoria(Connection con, int nroTemp, int nroPart) throws SQLException
+	public void RegistrarVictoria(IConexion icon, int nroTemp, int nroPart) throws SQLException
 	{
+		Connection con = icon.GetConnection();
 		String query = Consultas.RegistrarVictoria();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroPart);
@@ -130,8 +138,9 @@ public class AccesoBD
 		pstmt.close();
 	}
 	
-	public VODragQueenVictorias NroPartDragQueenConMasVictorias(Connection con, int nroTemp) throws SQLException
+	public VODragQueenVictorias NroPartDragQueenConMasVictorias(IConexion icon, int nroTemp) throws SQLException
 	{
+		Connection con = icon.GetConnection();
 		int nroPart = 0;
 		int mayor = 0;
 		String query = Consultas.NroPartDragQueenConMasVictorias();
@@ -147,7 +156,7 @@ public class AccesoBD
 				nroPart = rs.getInt("nroPart");
 			}
 		}
-		VODragQueen voDQ = this.DragQueenConNroPart(con, nroPart);
+		VODragQueen voDQ = this.DragQueenConNroPart(icon, nroPart);
 		VODragQueenVictorias resu= new VODragQueenVictorias(voDQ.getNombre(), nroTemp, nroPart, mayor);
 		
 		rs.close();
@@ -155,8 +164,9 @@ public class AccesoBD
 		return resu;
 	}
 	
-	public VODragQueen DragQueenConNroPart(Connection con, int nroPart) throws SQLException
+	public VODragQueen DragQueenConNroPart(IConexion icon, int nroPart) throws SQLException
 	{
+		Connection con = icon.GetConnection();
 		VODragQueen resu = null;
 		String query = Consultas.DragQueenConNroPart();
 		PreparedStatement pstmt = con.prepareStatement(query);
