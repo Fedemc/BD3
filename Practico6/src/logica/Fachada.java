@@ -51,20 +51,9 @@ public class Fachada
 	
 	public List<VOPersona> listarMayores(int edad) throws PersistenciaException
 	{
-		List<Persona> listaPer = new ArrayList<Persona>();
-		listaPer = daop.listarMayores(edad);
+		List<VOPersona> resu = daop.listarMayores(edad);
 		
-		List<VOPersona> listaVOPer = new ArrayList<VOPersona>();
-		
-		Iterator <Persona> iterator = listaPer.iterator();
-	    while (iterator.hasNext())
-	    {
-	    	Persona per = (Persona) iterator.next();
-	    	VOPersona vop = new VOPersona(per.getCedula(), per.getNombre(), per.getEdad());
-			listaVOPer.add(vop);
-	    }
-		
-		return listaVOPer;
+		return resu;
 	}
 
 }

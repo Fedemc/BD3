@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "Persona")
-@NamedQuery(name = "Persona.personasMayorAEdad", query = "SELECT p FROM Persona p")
+@NamedQuery(name = "Persona.personasMayorAEdad", query = "SELECT p FROM Persona p WHERE p.edad > :edad")
 
 public class Persona implements Serializable
 {
